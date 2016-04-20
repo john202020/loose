@@ -1,0 +1,25 @@
+{
+    "name": "loosejs",
+    "version": "1.0.0",
+    "description": "Provide clean communication between web components and user interface",
+    "main": "loose.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "signal",
+        "communication",
+        "web",
+        "components"
+    ],
+    "author": "john202020",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/john202020/loose.git"
+    },
+    "devDependencies": {
+        "jquery": "^1.7"
+    },
+    "/dist" "/node_modules"
+}
