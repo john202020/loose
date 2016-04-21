@@ -1,5 +1,5 @@
-### Loosejs
-``loosejs`` is a ``listen oriented`` programming library. It focus on listening, not observing.
+### Loose
+``loose`` is a ``listen oriented`` programming library. It focus on listening, not observing.
 It provides a clean communication between web components and the user interface (the outside ``environment``). 
 
 ### Depedency
