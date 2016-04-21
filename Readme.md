@@ -1,13 +1,9 @@
 ### Loose
-``loose`` is a ``listen oriented`` programming library. It focus on listening, not observing.
-It provides a clean communication between web components and the user interface (the outside ``environment``). 
-
-### Depedency
-It depends on jquery (at least v.1.7) to emit and listen javascript event.
+``loose`` is a ``listen driven`` library. It focus on listening. 
+It provides a clean communication between web components, and user interface. 
 
 ### Caution
 Only put non heavy loading codes inside a listener. 
-System logic should be outside a listener.
 
 ### Usage
 Each web component class (or wrapper) should have at least one ``loose`` object.
@@ -345,6 +341,9 @@ Does not change the state of isEnable().
 ```javascript
 lc.disposeRegistered();
 ```
+
+### Depedency
+It depends on jquery (at least v.1.7) to emit and listen javascript event.
 
 ### Further development
 This library is on its initial stage. A lot more can be implemented. We suggest following pending development.
