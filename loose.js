@@ -1,27 +1,21 @@
 
 (function (root, factory) {
-
-    if (typeof define === "function" && define.amd) {
-        define(["jquery"], factory);
-    }
-    else if (typeof module === "object" && module.exports) {
-        module.exports = factory( require("jquery"));
-    }
-    else {
-        root.loose = factory( root["jQuery"]);
-    }
-    
+    if (typeof define === "function" && define.amd)
+        define(["jquery"], factory);    
+    else if (typeof module === "object" && module.exports) 
+        module.exports = factory( require("jquery"));    
+    else 
+        root.loose = factory( root["jQuery"]);        
 }(this || (0, eval)('this'), function ( $) {
 
     "use strict";
     
     var _assure =_get_assure();
   
-
     _assure._jquery($);
     
-
     var _loose_id = 1;
+    
     //event targeting to document is total wrong because all event will be triggered from document
     var _reservedEventTarget = { document: "document" };
 
