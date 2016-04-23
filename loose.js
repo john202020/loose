@@ -160,7 +160,7 @@
                 _assure._NonRecommend_eventname(eventname);
 
                 _assure._isNonFunction(values);
-                _assure._simple_key_pair_object(values);
+             //   _assure._simple_key_pair_object(values);
 
                 _notify(values, eventname, lc);
             };

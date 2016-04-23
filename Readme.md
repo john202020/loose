@@ -1,6 +1,6 @@
 ### Loose
-``loose`` is a ``listen driven`` library. It focus on listening. 
 It provides a clean communication between web components, and user interface. 
+It focus on listening. 
 
 ### Caution
 Only put non heavy loading codes inside a listener. 
@@ -9,12 +9,12 @@ Only put non heavy loading codes inside a listener.
 Each web component class (or wrapper) should have at least one ``loose`` object.
 
 ```javascript
-var lc = require("loose")();
+var loose = require("loose")();
 ```
 
 __DOM event__
 ```javascript
-lc.listen(
+loose.listen(
     function(values){
         this; // values is {}, 'this' is the DOM anchor element
     },  "click", "a.name" // listen to clicked on <a class='name'> event
@@ -22,14 +22,14 @@ lc.listen(
 ```
 
 ```javascript
-lc.listenDocument(
+loose.listenDocument(
     function(values){
         this; // values is {}, 'this' is the DOM document
     },  "click" // listen to clicked on DOM document
 );
 ```
 ```javascript
-lc.listenElement(
+loose.listenElement(
     function(values){
         this; // values is {}, 'this' is the DOM element
     },  "click" // listen to clicked on DOM element
@@ -37,7 +37,7 @@ lc.listenElement(
 ```
 
 ```javascript
-lc.listen(
+loose.listen(
     function(values){
         this; // values is {}, 'this' is the DOM document or DOM element
     },  "click" // listen to any clicked event
@@ -45,7 +45,7 @@ lc.listen(
 ```
 
 ```javascript
-lc.listen(
+loose.listen(
     function(values){
 	    this; // values is {}, the DOM li elemnt
 	},  "mouseover", "li.name" // listen to mouseover on <li class='name'>
@@ -56,12 +56,12 @@ __Custom event__
 ``notify()``
 
 ```javascript
-lc.notify( true, 'alert boolean event');
+loose.notify( true, 'alert boolean event');
 ```
 
 Listen to its own ``loose``.
 ```javascript
-lc.listenSelf(
+loose.listenSelf(
     function(values){
         console.log("I have send a boolean: " + values);
     },	"alert boolean event" // custom event
@@ -70,7 +70,7 @@ lc.listenSelf(
 
 Listen to other ``loose``.
 ```javascript
-lc.listenOthers(
+loose.listenOthers(
     function(values){
         console.log("Other have just send a boolean: " + values);
     },  "alert boolean event" // custom event
@@ -79,14 +79,14 @@ lc.listenOthers(
 
 Listen to all ``loose`` and the ``environment``. In other words, all events.
 ```javascript
-lc.listen(
+loose.listen(
     function(values){
         console.log("A loose object just send a boolean: " + values);
     },  "alert boolean event" // custom event
 );
 ```
 ```javascript
-lc.listen(
+loose.listen(
     function(values){
         console.log("some one just click");
     }, 
@@ -97,13 +97,13 @@ lc.listen(
 
 __Enabled or disable__
 ```javascript
-lc.disable();  // stop all activities of this loose
+loose.disable();  // stop all activities of this loose
 ```
 ```javascript
-lc.enable();  // enable all activities of this loose
+loose.enable();  // enable all activities of this loose
 ```
 ```javascript
-lc.isEnable();  // return boolean
+loose.isEnable();  // return boolean
 ```
 
 __Chaining listener, notifier__
@@ -117,7 +117,7 @@ lc
 
 __Dispose all event listening up to the moment of invocation__
 ```javascript
-lc.dispose(); 
+loose.dispose(); 
 ```
 
 __Dispose only registered dispose event listening up to the moment of invocation__
@@ -125,25 +125,25 @@ __Dispose only registered dispose event listening up to the moment of invocation
 First add ``true`` argument to the listener
 
 ```javascript
-lc.listen(true,	callbackfunction, 'click');
+loose.listen(true,	callbackfunction, 'click');
 ```
 ```javascript
-lc.listen(true,	callbackfunction, 'something happens');
+loose.listen(true,	callbackfunction, 'something happens');
 ```
 ```javascript
-lc.listenDocument(true,	callbackfunction, 'click');
+loose.listenDocument(true,	callbackfunction, 'click');
 ```
 ```javascript
-lc.listenElement(true,	callbackfunction, 'click', 'a');
+loose.listenElement(true,	callbackfunction, 'click', 'a');
 ```
 ```javascript
-lc.listenSelf(true,	callbackfunction, 'submitfail event');
+loose.listenSelf(true,	callbackfunction, 'submitfail event');
 ```
 ```javascript
-lc.listenOthers(true, callbackfunction, 'delete item success event');
+loose.listenOthers(true, callbackfunction, 'delete item success event');
 ```
 ```javascript
-lc.disposeRegistered();
+loose.disposeRegistered();
 ```
 
 
@@ -217,13 +217,9 @@ listenOthers(callbackfunction, 'custom event');
 
 __more on ``notify()``__
 
-``values`` of ``notify(values, 'event name')`` is either a simple type, or simple key/value pair object type. 
+``values`` of ``notify(values, 'event name')`` will first be json stringified and parse back when listened. 
 Sending ``null`` will be converted to {}.
 Sending ``undefined`` will cause error thrown. 
-
-Simple type as a string, number, boolean. 
-Simple key/value pair object type as a {key1: simple type value 1, key2: simple type value 2, ...}.
-Any other type will be error thrown.
 
 If setting a ``custom event`` to a DOM (or html5) event name, e.g. 'click', error will be thrown.
 
@@ -308,6 +304,7 @@ listenOthers(function(values){this}, 'custom event');
 __notify(values, 'event name');__
 
 Send ``custom event``
+``values`` will first be json stringified and parse back when listened. 
 ``values``: if undefined, cause error thrown, if null, will be turned to {}.
 ```javascript
 notify({id:12}, 'just added a new person');
@@ -339,7 +336,7 @@ Disconnect and remove all registered dispose listener(s) that are up to the mome
 Does not affect listening attached afterwards.
 Does not change the state of isEnable().
 ```javascript
-lc.disposeRegistered();
+loose.disposeRegistered();
 ```
 
 ### Depedency
