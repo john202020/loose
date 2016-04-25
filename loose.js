@@ -17,7 +17,7 @@
     var _loose_id = 1;
     
     //event targeting to document is total wrong because all event will be triggered from document
-    var _reservedEventTarget = { document: "document" };
+    var _reservedEventTargets = [ "document" ];
 
     //should include all available document event
     var _nonrecommendNotifyEventNames = _getNonRecommendNotifyEventNames();
@@ -70,6 +70,7 @@
 
             return lc;
         }
+
 
         function getHandler(func, sourceTarget, is_to_listenSelf, lc) {
 
@@ -155,12 +156,9 @@
             function (values, eventname) {
                 _assure._Require(values);
                 _assure._Require(eventname);
-
                 _assure._isString(eventname);
                 _assure._NonRecommend_eventname(eventname);
-
                 _assure._isNonFunction(values);
-             //   _assure._simple_key_pair_object(values);
 
                 _notify(values, eventname, lc);
             };
@@ -190,7 +188,7 @@
 
                 if (sourceTarget) {
                     _assure._isString(sourceTarget);
-                    _assure._NonTargetDocument(sourceTarget);
+                    _assure._NonReservedEventTarget(sourceTarget);
                 }
 
                 if (is_to_listenSelf)
@@ -419,9 +417,12 @@
             },
 
 
-            _NonTargetDocument: function (target) {
-                if (target === _reservedEventTarget.document)
-                    throw Error("should not target event to " + _reservedEventTarget.document);
+            _NonReservedEventTarget: function (target) {
+                for (var i = 0; i < _reservedEventTargets.length; i++) {
+                    var _reservedEventTarget = _reservedEventTargets[i];
+                    if (target === _reservedEventTarget)
+                        throw Error("should not target event to " + _reservedEventTarget);
+                }
             },
 
 

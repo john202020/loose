@@ -2,9 +2,6 @@
 It provides a clean communication between web components, and user interface. 
 It focus on listening. 
 
-### Caution
-Only put non heavy loading codes inside a listener. 
-
 ### Usage
 Each web component class (or wrapper) should have at least one ``loose`` object.
 
@@ -13,6 +10,7 @@ var loose = require("loose")();
 ```
 
 __DOM event__
+
 ```javascript
 loose.listen(
     function(values){
@@ -44,20 +42,7 @@ loose.listen(
 );
 ```
 
-```javascript
-loose.listen(
-    function(values){
-	    this; // values is {}, the DOM li elemnt
-	},  "mouseover", "li.name" // listen to mouseover on <li class='name'>
-);
-```
-
-__Custom event__
-``notify()``
-
-```javascript
-loose.notify( true, 'alert boolean event');
-```
+__Further narrow down the listening to which loose object__
 
 Listen to its own ``loose``.
 ```javascript
@@ -77,7 +62,7 @@ loose.listenOthers(
 );
 ```
 
-Listen to all ``loose`` and the ``environment``. In other words, all events.
+Listen to all ``loose`` and the ``user inteface``. In other words, all events.
 ```javascript
 loose.listen(
     function(values){
@@ -85,17 +70,25 @@ loose.listen(
     },  "alert boolean event" // custom event
 );
 ```
+
+__Custom event__
+
+``notify()``
+
+```javascript
+loose.notify( true, 'alert boolean event');
+```
+
 ```javascript
 loose.listen(
     function(values){
-        console.log("some one just click");
-    }, 
-    "click",    // DOM event
-    "a"         // DOM element
+        console.log("A loose object just send a boolean: " + values);
+    },  "alert boolean event" // custom event
 );
 ```
 
 __Enabled or disable__
+
 ```javascript
 loose.disable();  // stop all activities of this loose
 ```
@@ -107,6 +100,7 @@ loose.isEnable();  // return boolean
 ```
 
 __Chaining listener, notifier__
+
 ```javascript
 lc
 .listen(callbackfunction,  'evet name', 'DOM element selector')
@@ -116,6 +110,7 @@ lc
 ```
 
 __Dispose all event listening up to the moment of invocation__
+
 ```javascript
 loose.dispose(); 
 ```
@@ -338,6 +333,9 @@ Does not change the state of isEnable().
 ```javascript
 loose.disposeRegistered();
 ```
+
+### Caution
+Only put non heavy loading codes inside a listener. 
 
 ### Depedency
 It depends on jquery (at least v.1.7) to emit and listen javascript event.
