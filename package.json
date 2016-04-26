@@ -1,6 +1,6 @@
 {
     "name": "loose",
-    "version": "1.0.4",
+    "version": "1.1.4",
     "description": "Provide clean communication between web components and user interface",
     "main": "loose.js",
     "scripts": {
@@ -9,8 +9,7 @@
     "keywords": [
         "signal",
         "communication",
-        "web",
-        "components"
+        "web component"
     ],
     "author": "john202020",
     "license": "MIT",
@@ -19,6 +18,7 @@
         "url": "https://github.com/john202020/loose.git"
     },
     "dependencies": {
-        "jquery": "^1.7"
+        "jquery": "^1.7",
+        "knockout": "^3.4.0"
     }
 }
