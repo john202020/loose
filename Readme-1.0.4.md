@@ -12,29 +12,26 @@ var loose = require("loose")();
 __DOM event__
 
 ```javascript
+
 loose.listen(
     function(values){
         this; // values is {}, 'this' is the DOM anchor element
     },  "click", "a.name" // listen to clicked on <a class='name'> event
 );
-```
 
-```javascript
+
 loose.listenDocument(
     function(values){
         this; // values is {}, 'this' is the DOM document
     },  "click" // listen to clicked on DOM document
 );
-```
-```javascript
+
 loose.listenElement(
     function(values){
         this; // values is {}, 'this' is the DOM element
     },  "click" // listen to clicked on DOM element
 );
-```
 
-```javascript
 loose.listen(
     function(values){
         this; // values is {}, 'this' is the DOM document or DOM element
@@ -90,13 +87,13 @@ loose.listen(
 __Enabled or disable__
 
 ```javascript
+
 loose.disable();  // stop all activities of this loose
-```
-```javascript
+
 loose.enable();  // enable all activities of this loose
-```
-```javascript
+
 loose.isEnable();  // return boolean
+
 ```
 
 __Chaining listener, notifier__
@@ -120,25 +117,21 @@ __Dispose only registered dispose event listening up to the moment of invocation
 First add ``true`` argument to the listener
 
 ```javascript
+
 loose.listen(true,	callbackfunction, 'click');
-```
-```javascript
+
 loose.listen(true,	callbackfunction, 'something happens');
-```
-```javascript
+
 loose.listenDocument(true,	callbackfunction, 'click');
-```
-```javascript
+
 loose.listenElement(true,	callbackfunction, 'click', 'a');
-```
-```javascript
+
 loose.listenSelf(true,	callbackfunction, 'submitfail event');
-```
-```javascript
+
 loose.listenOthers(true, callbackfunction, 'delete item success event');
-```
-```javascript
+
 loose.disposeRegistered();
+
 ```
 
 
@@ -155,13 +148,13 @@ Two types of event. ``DOM event`` and ``custom event``
 
 Three variations of ``event signature``. They are:
 ```javascript
+
 ('click', 'a.name'); // anchor clicked event
-```
-```javascript
+
 ('click'); // all clicked event
-```
-```javascript
+
 ('custom event'); // custom event
+
 ```
 
 Listen to ``custom event``.
@@ -219,10 +212,11 @@ Sending ``undefined`` will cause error thrown.
 If setting a ``custom event`` to a DOM (or html5) event name, e.g. 'click', error will be thrown.
 
 ```javascript
+
 notify({id:'12'}, 'Success. Newly added id event');
-```
-```javascript
+
 notify({id:'12'}, 'click'); // error thrown!!!
+
 ```
 
 ### API
@@ -233,7 +227,6 @@ Instantiation. Default is enable
 ```javascript
 var lc = require("loose")();
 ```
-
 
 __listen([ is registered dispose, ] callbackfunction, 'event name', 'optional dom element selector');__
 

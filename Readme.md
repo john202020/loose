@@ -4,7 +4,6 @@ It focus on listening.
 
 ### Inspired by Knockout observable
 Inspired by the knockoutjs observable, we are happy to presence the observable style listening.
-
 For backward compatible documentation, check [readme-1.0.4.md](https://github.com/john202020/loose/blob/master/Readme-1.0.4.md).
 
 ### Usage of observable style listening
@@ -47,7 +46,6 @@ loose.notify("everyone else should be closed");
 
 __notify(values, 'event name');__
 
-Send ``custom event``
 ``values`` optional. 
 
 If ``values`` exists, it will first be json stringified and parse back when listened. 

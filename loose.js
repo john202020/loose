@@ -15,13 +15,17 @@
 
     var _loose_id = 1;
 
+
     //event targeting to document is total wrong because all event will be triggered from document
     var _reservedEventTargets = ["document"];
+
 
     //should include all available document event
     var _nonrecommendNotifyEventNames = _getNonRecommendNotifyEventNames();
 
-    var _notify = (function (values, eventname, lc) {
+
+    //(values, eventname, lc)
+    var _notify = (function () {
 
         return function (values, eventname, lc) {
             if (lc.__enabled__) {
@@ -45,7 +49,8 @@
     }());
 
 
-    var _listen = (function (isDisposeOnRemove, func, eventname, sourceTarget, is_to_listenSelf, lc) {
+    //(isDisposeOnRemove, func, eventname, sourceTarget, is_to_listenSelf, lc)
+    var _listen = (function () {        
 
         var listen_index = 0;
 
@@ -97,6 +102,7 @@
             }
 
         }
+
     }());
 
 
@@ -105,16 +111,15 @@
 
         if (typeof enable !== "undefined")
             _assure._boolean(enable);
+        
 
-        return new _loose((typeof enable === "undefined") ? true : enable);
+        return new _loose({}, (typeof enable === "undefined") ? true : enable);
 
     }
 
 
-    function _loose(enable) {
-
-        var lc = {};
-
+    function _loose(lc, enable) {
+        
         return (function () {
             
             lc.__listening__ = [];
@@ -429,6 +434,7 @@
         lc.__listening_registered__ = [];
 
     };
+
 
     function _getNonRecommendNotifyEventNames() {
         var nonrecommendNotifyEventNames = "load,unload,click,dbclick,keydown,keypress,keyup,change";
