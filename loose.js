@@ -232,12 +232,10 @@
             function () {
                 //(eventname)
                 var args = arguments;
-
-                var argIndexOffset = args.length === 2 ? 1 : 0;
-
+                
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
              
-                var eventname = args[argIndexOffset];
+                var eventname = args[args.length > 1 ? 1 : 0];
 
                 var _isFunc = function () {
                     return (this.nodeType === 9);                        
@@ -253,7 +251,7 @@
                 //(eventname, sourceTarget)
                 var args = arguments;
 
-                var argIndexOffset = args.length === 3 ? 1 : 0;
+                var argIndexOffset = args.length > 2 ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
             
@@ -274,16 +272,14 @@
                 //(eventname)
                 var args = arguments;
 
-                var argIndexOffset = args.length === 2 ? 1 : 0;
-
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
                 
-                var eventname = args[argIndexOffset ];
+                var eventname = args[args.length > 1 ? 1 : 0];
 
                 var _isFunc = function () {
                     return true;
                 }
-                return lc.ob.listen(eventname, null, true, _isFunc);
+                return lc.ob.listen(isDisposeOnRemove, eventname, null, true, _isFunc);
             };
 
 
@@ -294,17 +290,17 @@
                 //(eventname)
                 var args = arguments;
 
-                var argIndexOffset = args.length === 2 ? 1 : 0;
+               // var argIndexOffset = args.length === 2 ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
         
-                var eventname = args[argIndexOffset];
+                var eventname = args[args.length > 1 ? 1 : 0];
 
                 var _isFunc = function () {
                     return true;
                 }
 
-                return lc.ob.listen(eventname, null, false, _isFunc);
+                return lc.ob.listen(isDisposeOnRemove, eventname, null, false, _isFunc);
             };
 
         //expect function as the first argument
@@ -316,7 +312,7 @@
                 //(func, eventname, sourceTarget, is_to_listenSelf)
                 var args = arguments;
                 
-                var argIndexOffset = args.length === 5 ? 1 : 0;
+                var argIndexOffset = args.length > 4 ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false ;
                 var func = args[argIndexOffset];
@@ -348,7 +344,7 @@
                 //(func, eventname)
                 var args = arguments;
 
-                var argIndexOffset = args.length === 3 ? 1 : 0;
+                var argIndexOffset = args.length > 2 ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
                 var func = args[argIndexOffset];
@@ -370,7 +366,7 @@
                 //(func, eventname, sourceTarget)
                 var args = arguments;
 
-                var argIndexOffset = args.length === 4 ? 1 : 0;
+                var argIndexOffset = args.length > 3 ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
                 var func = args[argIndexOffset];
@@ -394,7 +390,7 @@
                 //(func, eventname)
                 var args = arguments;
 
-                var argIndexOffset = args.length === 3 ? 1 : 0;
+                var argIndexOffset = args.length > 2 ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
                 var func = args[argIndexOffset];
@@ -411,7 +407,7 @@
                 //(func, eventname)
                 var args = arguments;
 
-                var argIndexOffset = args.length === 3 ? 1 : 0;
+                var argIndexOffset = args.length > 2 ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
                 var func = args[argIndexOffset];
