@@ -78,23 +78,29 @@
 
 
         function getHandler(func, sourceTarget, is_to_listenSelf, lc) {
-
             return function (event, data) {
                 event.stopPropagation()
 
                 var self = this;
 
-                var values = null;
-                if (!sourceTarget && event.values)
-                    values = JSON.parse(event.values); //passed values from JQuery event
-
+                var values = null;                
+                             
                 var shouldlisten = lc.__enabled__;
                 if (shouldlisten)
                     if (typeof is_to_listenSelf !== 'undefined' && is_to_listenSelf !== null)
                         shouldlisten = is_to_listenSelf === isme(values, lc);
 
-                if (shouldlisten)
-                    func.call(self, sourceTarget ? {} : values || {});
+                if (shouldlisten) {
+
+                    if (!sourceTarget && event.values)
+                        values = JSON.parse(event.values); //passed values from JQuery event
+                    
+                    values = sourceTarget ? {} : values || {};
+                    values.event = event;
+                    
+                    func.call(self, values);
+                }
+
             };
 
             function isme(values, lc) {
