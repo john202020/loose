@@ -28,6 +28,9 @@
     var _notify = (function () {
 
         return function (values, eventname, lc) {
+
+            eventname = equalizeeventname(eventname);
+
             if (lc.__enabled__) {
 
                 var values = values || {};
@@ -49,8 +52,12 @@
     }());
 
 
+    function equalizeeventname(eventname) {
+        return eventname.replaceAll("_", "__").replaceAll(" ", "_");
+    }
+
     //(isDisposeOnRemove, func, eventname, sourceTarget, is_to_listenSelf, lc)
-    var _listen = (function () {        
+    var _listen = (function () {
 
         var listen_index = 0;
 
@@ -58,6 +65,9 @@
 
             $("document").ready(
                 function () {
+
+                    eventname = equalizeeventname(eventname);
+
                     var handler_ = getHandler(func, sourceTarget, is_to_listenSelf, lc);
 
                     var namespace = '.' + (listen_index++);
@@ -83,8 +93,13 @@
 
                 var self = this;
 
-                var values = null;                
-                             
+                var values = null;
+
+                //    if (!sourceTarget &&
+                if (event.values)
+                    values = JSON.parse(event.values); //passed values from JQuery event
+
+
                 var shouldlisten = lc.__enabled__;
                 if (shouldlisten)
                     if (typeof is_to_listenSelf !== 'undefined' && is_to_listenSelf !== null)
@@ -92,12 +107,10 @@
 
                 if (shouldlisten) {
 
-                    if (!sourceTarget && event.values)
-                        values = JSON.parse(event.values); //passed values from JQuery event
-                    
+
                     values = sourceTarget ? {} : values || {};
                     values.event = event;
-                    
+
                     func.call(self, values);
                 }
 
@@ -117,7 +130,7 @@
 
         if (typeof enable !== "undefined")
             _assure._boolean(enable);
-        
+
 
         return new _loose({}, (typeof enable === "undefined") ? true : enable);
 
@@ -125,9 +138,18 @@
 
 
     function _loose(lc, enable) {
-        
+
         return (function () {
-            
+
+            lc.keys = {
+                left: 37,
+                up: 38,
+                right: 39,
+                down: 40,
+                enter: 13,
+                escape: 27
+            };
+
             lc.__listening__ = [];
 
             lc.__listening_registered__ = [];
@@ -298,14 +320,14 @@
 
 
             lc.ob = _getLoose_observable_constructor(lc);
-            
+
             return lc;
 
         }());
     }
 
 
-    function _getLoose_observable_constructor(lc){
+    function _getLoose_observable_constructor(lc) {
         return {
             //sourceEvent is compulsory
             //sourceTarget is optional
