@@ -22,19 +22,13 @@ var ob = loose.ob;
 //      values: {},
 //      dom: DOM document or DOM element
 //  });
-var a_name_clicked = ob.listen("click", "a.name"); // listen to clicked on <a class='name'> event
-var custom_call_to_close_others = ob.listen("everyone else should be closed"); // listen to custom event
 
-a_name_clicked.subscribe(
-    function(value){
-        var values = value.values ;
-        var dom = value.dom; //the DOM anchor element
-    }
-);
+var custom_call_to_close_others = ob.listen("everyone else should be closed"); // listen to custom event
 
 custom_call_to_close_others.subscribe(
     function(value){
         var values = value.values ; // values be {}
+        var event = value.event; //jquery event
         var dom = value.dom; //the DOM document
     }
 );
@@ -43,6 +37,20 @@ loose.notify("everyone else should be closed");
 ```
 
 ### API
+
+__listen(values, 'event name')__ 
+
+``values`` include jquery event ( start from version 1.1.6 )
+
+```javascript
+custom_call_to_close_others.subscribe(
+    function(value){
+        var values = value.values ;
+        var event = value.event; //jquery event
+        var dom = value.dom; //the DOM anchor element
+    }
+);
+```
 
 __notify(values, 'event name');__
 
