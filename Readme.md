@@ -1,7 +1,3 @@
-### Loose
-It provides a clean communication between web components, and user interface.
-It focus on listening.
-
 ### Inspired by Knockout observable
 Inspired by the knockoutjs observable, we are happy to presence the observable style listening.
 For backward compatible documentation, check [readme-1.0.4.md](https://github.com/john202020/loose/blob/master/Readme-1.0.4.md).

@@ -1,24 +1,25 @@
 {
-    "name": "loose",
-    "version": "1.1.6",
-    "description": "Provide clean communication between web components and user interface",
-    "main": "loose.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [
-        "signal",
-        "communication",
-        "web component"
-    ],
-    "author": "john202020",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/john202020/loose.git"
-    },
-    "dependencies": {
-        "jquery": "^1.7",
-        "knockout": "^3.4.0"
-    }
+  "name": "loose",
+  "version": "1.1.6",
+  "description": "Provide clean communication between web components and user interface",
+  "main": "loose.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "signal",
+    "communication",
+    "web component"
+  ],
+  "author": "john202020",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/john202020/loose.git"
+  },
+  "dependencies": {
+    "jquery": "^1.7",
+    "knockout": "^3.4.0",
+    "rx": "^4.1.0"
+  }
 }
