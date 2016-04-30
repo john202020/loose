@@ -5,15 +5,11 @@
     else if (typeof module === "object" && module.exports)
         module.exports = factory(require("jquery"), require("knockout"));
     else
-        root.loose = factory(root["jQuery"], root["knockout"] || root["ko"]);
+        root.looseko = factory(root["jQuery"], root["knockout"] || root["ko"]);
 }(this || (0, eval)('this'), function ($, ko) {
 
-    //var _assure = _get_assure();
 
-    //_assure._jquery($);
-
-    //_getLoose_observable_constructor
-    return function (lc) {
+    function loose_ko(lc) {
         var lc_ob = {
             //sourceEvent is compulsory
             //sourceTarget is optional
@@ -25,31 +21,37 @@
 
             listen: function () {
                 //(isDisposeOnRemove, eventname, sourceTarget, is_to_listenSelf, isFunc)
+
+                var assure = lc.__assure__;
+                
                 var args = arguments;
                 var leng = args.length;
-                var argIndexOffset = leng > 3 ? 1 : 0;
+                var argIndexOffset = typeof args[0] === "boolean" ? 1 : 0;
 
-              //  var eventname = args[argIndexOffset];
-                var sourceTarget = args[argIndexOffset + 1];
-                var is_to_listenSelf = args[argIndexOffset + 2];
-
-                var ob = ko.observable({ values: {}, dom: document });
+                var eventname = args[argIndexOffset];
+                var sourceTarget = args[argIndexOffset + 1];            
+                var is_to_listenSelf = args[argIndexOffset + 2];   
+                var isFunc = args[argIndexOffset + 3];
 
                 var _isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
-                var eventname = typeof args[0] === "string" ? args[0] : args[1];
+                          
+                assure._isString(eventname);                
 
-                var _isFuncIndex = undefined;
-                _isFuncIndex = leng === 5 ? 4 : undefined;
-                var _isFunc = typeof _isFuncIndex !== "undefined" ? args[_isFuncIndex] : undefined;
-
+                var ob = ko.observable({ values: {}, dom: document });
+              
                 var _func = function (values) {
-                    if (typeof _isFunc === "undefined" || _isFunc.call(this))
-                        ob({ values: values, dom: this });
+              
+                    if (isFunc === undefined || isFunc === null || isFunc.call(this)) {
+                        values.dom = this;
+
+                        ob(values);
+                    }
                 };
 
                 lc.listen(_isDisposeOnRemove, _func, eventname, sourceTarget, is_to_listenSelf);
-
+          
                 return ob;
+
 
             },
 
@@ -58,10 +60,11 @@
             listenDocument: function () {
                 //(isDisposeOnRemove, eventname)
                 var args = arguments;
+                var argIndexOffset = typeof args[0] === "boolean" ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
 
-                var eventname = args[args.length > 1 ? 1 : 0];
+                var eventname = args[argIndexOffset];
 
                 var _isFunc = function () {
                     return (this.nodeType === 9);
@@ -76,7 +79,7 @@
                 //(isDisposeOnRemove, eventname, sourceTarget)
                 var args = arguments;
 
-                var argIndexOffset = args.length > 2 ? 1 : 0;
+                var argIndexOffset = typeof args[0] === "boolean" ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
 
@@ -95,10 +98,11 @@
             listenSelf: function () {
                 //(isDisposeOnRemove, eventname)
                 var args = arguments;
+                var argIndexOffset = typeof args[0] === "boolean" ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
 
-                var eventname = args[args.length > 1 ? 1 : 0];
+                var eventname = args[argIndexOffset];
 
                 var _isFunc = function () {
                     return true;
@@ -110,10 +114,11 @@
             listenOthers: function () {
                 //(isDisposeOnRemove, eventname)
                 var args = arguments;
+                var argIndexOffset = typeof args[0] === "boolean" ? 1 : 0;
 
                 var isDisposeOnRemove = typeof args[0] === "boolean" ? args[0] : false;
 
-                var eventname = args[args.length > 1 ? 1 : 0];
+                var eventname = args[argIndexOffset];
 
                 var _isFunc = function () {
                     return true;
@@ -126,4 +131,6 @@
         return lc_ob;
     }
 
+
+    return loose_ko;
 }));

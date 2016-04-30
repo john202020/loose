@@ -1,49 +1,78 @@
-### Inspired by Knockout observable
-Inspired by the knockoutjs observable, we are happy to presence the observable style listening.
-For backward compatible documentation, check [readme-1.0.4.md](https://github.com/john202020/loose/blob/master/Readme-1.0.4.md).
+### Inspired by Knockoutjs and Rxjs
+For backward compatible documentation, 
+check [readme-1.0.4.md](https://github.com/john202020/loose/blob/master/Readme-1.0.4.md).
+check [readme-1.1.6.md](https://github.com/john202020/loose/blob/master/Readme-1.1.6.md).
 
-### Usage of observable style listening
-To use the observable style listening, just retrieve the observable constructor and call listeners on it, without the callback function.
-Instead, the callback function will now be placed in the subscription of an observable.
+
+### Knockout style listening
+Retrieve Knockout reference and call listeners on it.
 
 ```javascript
 
 var loose = require("loose")();
 
-// retrieve the observable constructor.
-var ob = loose.ob;
+// retrieve the Knockout reference.
+var koob = loose.ob;
 
-//return
-//  ko.observable({
-//      values: {},
-//      dom: DOM document or DOM element
-//  });
+//return //jquery event
+//  {
+//      values: //values if triggered by notify(values)
+//      dom: //DOM document or DOM element
+//  }
 
-var custom_call_to_close_others = ob.listen("everyone else should be closed"); // listen to custom event
-
-custom_call_to_close_others.subscribe(
-    function(value){
-        var values = value.values ; // values be {}
-        var event = value.event; //jquery event
-        var dom = value.dom; //the DOM document
+koob.listen("everyone else should be closed")
+.subscribe(
+    function(event){
+        var values = event.values ; // values be {}
+        var dom = event.dom; //the DOM document
     }
 );
+```
 
+### Rxjs style listening
+Retrieve Rxjs reference and call listeners on it.
+
+```javascript
+
+var loose = require("loose")();
+
+// retrieve the Rxjs reference .
+var rxob = loose.rx;
+
+//return //jquery event
+//  {
+//      values: //values if triggered by notify(values)
+//      dom: //DOM document or DOM element
+//  }
+
+rxob.listen("everyone else should be closed")
+.subscribe(
+    function(event){
+        var values = event.values ; // values be {}
+        var dom = event.dom; //the DOM document
+    },
+    function(err){}, //error
+    function(){} //completed
+);
+```
+
+```javascript
 loose.notify("everyone else should be closed");
 ```
 
 ### API
 
-__listen(values, 'event name')__ 
+__listen(jquery event, 'event name')__ 
 
-``values`` include jquery event ( start from version 1.1.6 )
+``jquery event`` (start from version 1.1.7)
+
+``values.event`` (removed starting from 1.1.7, check [readme-1.1.6.md](https://github.com/john202020/loose/blob/master/Readme-1.1.6.md))
 
 ```javascript
-custom_call_to_close_others.subscribe(
-    function(value){
-        var values = value.values ;
-        var event = value.event; //jquery event
-        var dom = value.dom; //the DOM anchor element
+custom_call.subscribe(
+    function(jqueryevent){
+        var values = jqueryevent.values ;     
+        var dom = jqueryevent.dom; //the DOM anchor element
     }
 );
 ```
@@ -64,5 +93,6 @@ notify('call all to be alerted');
 
 
 ### Depedency
-It depends on jquery (at least v.1.7) to emit and listen javascript event, 
-and knockoutjs to extend the observable style listening.
+It depends on jquery (at least v.1.7) to emit and listen javascript event.
+It depends on knockout.
+It depends on Rxjs.
