@@ -3,52 +3,39 @@ For backward compatible documentation,
 check [readme-1.0.4.md](https://github.com/john202020/loose/blob/master/Readme-1.0.4.md).
 check [readme-1.1.6.md](https://github.com/john202020/loose/blob/master/Readme-1.1.6.md).
 
-
-### Knockout style listening
-Retrieve Knockout reference and call listeners on it.
-
 ```javascript
 
 var loose = require("loose")();
 
+```
+
+### Knockout observable listening
+Retrieve Knockout reference and call listeners on it.
+
+```javascript
+
 // retrieve the Knockout reference.
-var koob = loose.ob;
-
-//return //jquery event
-//  {
-//      values: //values if triggered by notify(values)
-//      dom: //DOM document or DOM element
-//  }
-
-koob.listen("everyone else should be closed")
+loose.ob.listen("everyone else should be closed")
 .subscribe(
+    //jquery event
     function(event){
-        var values = event.values ; // values be {}
+        var values = event.values ; // values if triggered by notify(values), else values be {}
         var dom = event.dom; //the DOM document
     }
 );
 ```
 
-### Rxjs style listening
+### Rxjs observable listening
 Retrieve Rxjs reference and call listeners on it.
 
 ```javascript
 
-var loose = require("loose")();
-
-// retrieve the Rxjs reference .
-var rxob = loose.rx;
-
-//return //jquery event
-//  {
-//      values: //values if triggered by notify(values)
-//      dom: //DOM document or DOM element
-//  }
-
-rxob.listen("everyone else should be closed")
+// retrieve the Rxjs reference
+loose.rx.listen("everyone else should be closed")
 .subscribe(
+    //jquery event
     function(event){
-        var values = event.values ; // values be {}
+        var values = event.values ; // values if triggered by notify(values), else values be {}
         var dom = event.dom; //the DOM document
     },
     function(err){}, //error
@@ -71,7 +58,7 @@ __listen(jquery event, 'event name')__
 ```javascript
 custom_call.subscribe(
     function(jqueryevent){
-        var values = jqueryevent.values ;     
+        var values = jqueryevent.values ; // values if triggered by notify(values), else values be {}
         var dom = jqueryevent.dom; //the DOM anchor element
     }
 );
