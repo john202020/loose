@@ -8,10 +8,10 @@ Instead, the callback function will now be placed in the subscription of an obse
 
 ```javascript
 
-var loose = require("loose")();
+var lc = require("loose")();
 
 // retrieve the observable constructor.
-var ob = loose.ob;
+var ob = lc.ob;
 
 //return
 //  ko.observable({

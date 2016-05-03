@@ -17,8 +17,8 @@
     "type": "git",
     "url": "https://github.com/john202020/loose.git"
   },
-  "dependencies": {
-    "jquery": "^1.7",
+  "devDependencies": {
+    "jquery": "^1.12.3",
     "knockout": "^3.4.0",
     "rx": "^4.1.0"
   }
