@@ -1,6 +1,6 @@
 {
     "name": "loose",
-    "version": "1.1.8",
+    "version": "1.2.8",
     "description": "Provide clean communication between web components and user interface",
     "main": "loose.js",
     "scripts": {
@@ -19,7 +19,6 @@
     },
     "dependencies": {
         "jquery": "^1.12.3",
-        "knockout": "^3.4.0",
         "rx": "^4.1.0"
     }
 }
