@@ -11,7 +11,7 @@
 
     var base = base_worker($);
 
-    var _assure = base._get_assure();
+    var _assure = base._assure;
 
     _assure._jquery($);
 
@@ -62,11 +62,7 @@
         lc.__token__ = "" + _loose_id++;
 
         lc.__enabled__ = enable;
-
-        lc.disposeRegistered = function () {
-            _disposeRegistered(lc);
-        };
-
+        
         lc.dispose = function () {
             _dispose(lc);
         };
@@ -89,7 +85,7 @@
         //loose's 'token' will be attached to the generated event
         //'token_tracer' will be attached to the generated event
 
-        //( eventname, values)
+        //(eventname, values)
         lc.notify = function () {
 
             var args = arguments;
@@ -127,40 +123,6 @@
 
 
     function _dispose(lc) {
-
-        $("document").ready(
-             function () {
-                 while (lc.__listening__.length > 0) {
-                     var li = __listening__.pop();
-                     if (li.dispose)
-                         li.dispose();
-                     else
-                         $(this).off(li);
-                 }
-             });
-
-        lc.__listening__ = [];
-
-    };
-
-
-    function _disposeRegistered(lc) {
-
-        $("document").ready(
-             function () {
-                 while (lc.__listening_registered__.length > 0) {
-
-                     var li = __listening_registered__.pop();
-                     if (li.dispose)
-                         li.dispose();
-                     else
-                         $(this).off(li);
-
-                 }
-             });
-
-        lc.__listening_registered__ = [];
-
     };
 
 
@@ -172,22 +134,15 @@
     function loose_rx(lc) {
         var lc_rx = {
 
-            //(isDisposeOnRemove, eventname, sourceTarget, isFunc)
+            //(eventname, sourceTarget, isFunc)
             listen: function () {
 
                 var params = base._getListenParams(lc, arguments);
                 params.func = params.func || function () { return true; };
                 base._assureListen(params);
 
-                var subscription = getObservable(params);
-
-                lc.__listening__.push(subscription);
-
-                if (params.isDisposeOnRemove)
-                    lc.__listening_registered__.push(subscription);
-
-                return subscription;
-
+                return getObservable(params);
+                
 
                 function getObservable(params) {
 
@@ -233,7 +188,7 @@
 
 
             //react only when event from DOM document
-            //(isDisposeOnRemove, eventname)
+            //(eventname)
             listenDocument: function () {
 
                 var params = base._getListenDocumentParams(lc, arguments);
@@ -245,13 +200,13 @@
                 params.func = _isFunc;
                 base._assureListenDocument(params);
 
-                return lc_rx.listen(params.isDisposeOnRemove, params.eventname, null, _isFunc);
+                return lc_rx.listen( params.eventname, null, _isFunc);
 
             },
 
 
             //react only when event from DOM document
-            //(isDisposeOnRemove, eventname, sourceTarget)
+            //(eventname, sourceTarget)
             listenElement: function () {
 
                 var params = base._getListenElementParams(lc, arguments);
@@ -263,13 +218,13 @@
                 params.func = _isFunc;
                 base._assureListenElement(params);
 
-                return lc_rx.listen(params.isDisposeOnRemove, params.eventname, params.sourceTarget, _isFunc);
+                return lc_rx.listen( params.eventname, params.sourceTarget, _isFunc);
 
             },
 
 
             //react only when token the same
-            //(isDisposeOnRemove, eventname)
+            //(eventname)
             listenSelf: function () {
 
                 var params = base._getListenSelfParams(lc, arguments);
@@ -281,25 +236,24 @@
                 params.func = _isFunc;
                 base._assureListenSelf(params);
 
-                return lc_rx.listen(params.isDisposeOnRemove, params.eventname, null, _isFunc);
+                return lc_rx.listen( params.eventname, null, _isFunc);
             },
 
 
             //react only when token not the same
-            //(isDisposeOnRemove, eventname)
+            //(eventname)
             listenOthers: function () {
 
                 var params = base._getListenOthersParams(lc, arguments);
 
                 var _isFunc = function (event) {
-                    // return true;
                     return !isme(event, lc);
                 }
 
                 params.func = _isFunc;
                 base._assureListenOthers(params);
 
-                return lc_rx.listen(params.isDisposeOnRemove, params.eventname, null, _isFunc);
+                return lc_rx.listen( params.eventname, null, _isFunc);
             }
         };
 
@@ -308,6 +262,10 @@
 
 
     function base_worker($) {
+
+
+        var assure = _get_assure();
+
 
         function _equalizeeventname(eventname) {
             return eventname.replaceAll("_", "__").replaceAll(" ", "_");
@@ -321,12 +279,12 @@
         var _reservedEventTargets = ["document"];
 
 
-        //(isDisposeOnRemove, func, eventname, sourceTarget, lc)
+        //(func, eventname, sourceTarget, lc)
         var _listen = (function () {
 
             var listen_index = 0;
 
-            return function (isDisposeOnRemove, func, eventname, sourceTarget, lc) {
+            return function ( func, eventname, sourceTarget, lc) {
 
                 $("document").ready(
                     function () {
@@ -393,9 +351,9 @@
             //(eventname) 
             _equalizeeventname: _equalizeeventname,
 
-            _get_assure: _get_assure,
+            _assure: assure,
 
-            //(isDisposeOnRemove, func, eventname, sourceTarget, lc)
+            //(func, eventname, sourceTarget, lc)
             _listen: _listen,
 
             _getListenParams: getListenParams,
@@ -415,72 +373,61 @@
         return base;
 
 
-        //(isDisposeOnRemove, eventname, sourceTarget, isFunc)
+        //(eventname, sourceTarget, isFunc)
         function getListenParams(lc, args) {
 
-            var argOffset = typeof args[0] === "boolean" ? 1 : 0;
-
             return {
-                isDisposeOnRemove: typeof args[0] === "boolean" ? args[0] : false,
-                eventname: args[argOffset],
-                sourceTarget: args[argOffset + 1],
-                func: args[argOffset + 2]
+               
+                eventname: args[0],
+                sourceTarget: args[1],
+                func: args[2]
             };
         }
 
 
-        //(isDisposeOnRemove, eventname)
+        //(eventname)
         function getListenDocumentParams(lc, args) {
-
-            var argOffset = typeof args[0] === "boolean" ? 1 : 0;
-
-            return {
-                isDisposeOnRemove: typeof args[0] === "boolean" ? args[0] : false,
-                eventname: args[argOffset]
+            
+            return {                
+                eventname: args[0]
             };
         }
 
 
-        //(isDisposeOnRemove, eventname, sourceTarget)
+        //(eventname, sourceTarget)
         function getListenElementParams(lc, args) {
-
-            var argOffset = typeof args[0] === "boolean" ? 1 : 0;
-
+            
             return {
-                isDisposeOnRemove: typeof args[0] === "boolean" ? args[0] : false,
-                eventname: args[argOffset],
-                sourceTarget: args[argOffset + 1]
+               
+                eventname: args[0],
+                sourceTarget: args[1]
             };
         }
 
 
-        //(isDisposeOnRemove, eventname)
+        //(eventname)
         function getListenSelfParams(lc, args) {
 
-            var argOffset = typeof args[0] === "boolean" ? 1 : 0;
-
             return {
-                isDisposeOnRemove: typeof args[0] === "boolean" ? args[0] : false,
-                eventname: args[argOffset]
+              
+                eventname: args[0]
             };
         }
 
 
-        //(isDisposeOnRemove, eventname)
+        //(eventname)
         function getListenOthersParams(lc, args) {
 
-            var argOffset = typeof args[0] === "boolean" ? 1 : 0;
-
             return {
-                isDisposeOnRemove: typeof args[0] === "boolean" ? args[0] : false,
-                eventname: args[argOffset]
+            
+                eventname: args[0]
             };
         }
 
 
         function assureListen(params) {
 
-            var assure = base._get_assure();
+          //  var assure = base._get_assure();
 
             assure._isString(params.eventname);
 
@@ -495,7 +442,7 @@
 
         function assureListenDocument(params) {
 
-            var assure = base._get_assure();
+         //   var assure = base._get_assure();
 
             assure._isString(params.eventname);
             assure._isFunction(params.func);
@@ -504,7 +451,7 @@
 
         function assureListenElement(params) {
 
-            var assure = base._get_assure();
+          //  var assure = base._get_assure();
 
             assure._isString(params.eventname);
 
@@ -519,7 +466,7 @@
 
         function assureListenSelf(params) {
 
-            var assure = base._get_assure();
+          //  var assure = base._get_assure();
 
             assure._isString(params.eventname);
             assure._isFunction(params.func);
@@ -528,7 +475,7 @@
 
         function assureListenOthers(params) {
 
-            var assure = base._get_assure();
+         //   var assure = base._get_assure();
 
             assure._isString(params.eventname);
             assure._isFunction(params.func);
