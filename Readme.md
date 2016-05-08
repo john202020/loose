@@ -5,10 +5,6 @@
 ```
 (the non observable and knockout observable style listening are removed.)
 ```
-For non observable style listening, check [readme-1.0.4.md](https://github.com/john202020/loose/blob/master/Readme-1.0.4.md).
-
-For observable style listening, check [readme-1.1.6.md](https://github.com/john202020/loose/blob/master/Readme-1.1.6.md).
-
 
 ### Rxjs observable listening
 
@@ -69,8 +65,8 @@ __listen(event name [, jquery style dom element selector])__
 //listenDocument(custom or dom event name [, selector]) 
 //listenElement(custom or dom event name [, selector]) 
 
-var listener_of_click_on_all_achor = listen("click", "a");
-var listener_of_a_custom_event = listen("some custom event name");
+var listen_anchor_click = listen("click", "a");
+var listen_custom_event = listen("custom event");
 
 ```
 
@@ -78,9 +74,6 @@ __subscribe(function(event){})__
 
 
 ```javascript
-
-//event is the jquery event (since version 1.1.7)
-//values.event (removed since 1.1.7)
 
 somelistener.subscribe(
     function(event){
@@ -100,5 +93,14 @@ __notify('event name' [, values])__
 
 notify({id:12}, 'just added a new person');
 notify('call all to be alerted');
+
+```
+
+__noConflict()__
+
+
+```javascript
+
+var loose = loose.noConflict();
 
 ```
