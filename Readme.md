@@ -2,9 +2,6 @@
 ### Inspired by Rxjs
 ``rxjs`` observable style listening (i.e. streaming, filtering, mapping, are available on listener). 
 
-```
-(the non observable and knockout observable style listening are removed.)
-```
 
 ### Rxjs observable listening
 
@@ -72,7 +69,6 @@ var listen_custom_event = listen("custom event");
 
 __subscribe(function(event){})__
 
-
 ```javascript
 
 somelistener.subscribe(
@@ -85,7 +81,6 @@ somelistener.subscribe(
 
 __notify('event name' [, values])__
 
-
 ```javascript
 
 //values is optional. (note: if values exists, it might be first be json stringified and parse back when listened) 
@@ -96,8 +91,8 @@ notify('call all to be alerted');
 
 ```
 
-__noConflict()__
 
+__noConflict()__
 
 ```javascript
 

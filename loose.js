@@ -1,5 +1,6 @@
 "use strict";
 
+
 (function (factory) {
 
     var root = this || (0, eval)('this');
@@ -10,8 +11,17 @@
         module.exports = factory(root, require("jquery"), require("rx"));
     else
         factory(root, root["jQuery"], root["rx"]);
-        
+
 } (function (root, $, rx) {
+
+    if (!String.prototype.replaceAll) {
+        String.prototype.replaceAll = function (search, replacement) {
+
+            var target = this;
+            return target.replace(new RegExp(search, 'g'), replacement);
+
+        }
+    }
 
     var base = base_worker($);
 
@@ -41,6 +51,53 @@
         _loose_rx(lc);
 
         return lc;
+    }
+
+
+    function _listen(lc, params) {
+
+        return getObservable(params);
+
+
+        function getObservable(params) {
+
+            return rx.Observable
+                .fromEvent($(document), params.eventname)
+                .filter(event => _shouldlisten(lc, params.func, params.sourceTarget, event))
+                .map(event => getValues(event));
+
+
+            function _shouldlisten(lc, isFunc, sourceTarget, event) {
+
+                event = getValues(event);
+
+                return lc.__enabled__ && isMatchDOM(isFunc, sourceTarget, event);
+
+                function isMatchDOM(isFunc, sourceTarget, event) {
+
+                    var dom = event.dom;
+
+                    return (isFunc === undefined || isFunc === null || isFunc.call(dom, event))
+                        && (sourceTarget === undefined || sourceTarget === null || $(dom).is(sourceTarget));
+                }
+            }
+
+
+            function getValues(event) {
+
+                var nodeName = event.target.nodeName;
+
+                event.dom = (nodeName === "#document" || nodeName === "HTML" || nodeName === "BODY") ?
+                    document : event.target;
+
+                event.values = event.values || {};
+                try {
+                    event.values = JSON.parse(event.values || {});
+                } catch (e) { }
+
+                return event;
+            }
+        }
     }
 
 
@@ -111,62 +168,23 @@
                 $.event.trigger(event);
             }
         };
-
     }
 
 
     function _loose_rx(lc) {
         var lc_rx = {
 
-            //(eventname, sourceTarget, isFunc)
+            //(eventname, sourceTarget)
             listen: function () {
 
                 var params = base._getListenParams(lc, arguments);
-                params.func = params.func || function () { return true; };
+
+                params.func = function () {
+                    return true;
+                };
                 base._assureListen(params);
 
-                return getObservable(params);
-
-
-                function getObservable(params) {
-
-                    return rx.Observable
-                        .fromEvent($(document), params.eventname)
-                        .filter(event => _shouldlisten(lc, params.func, params.sourceTarget, event))
-                        .map(event => getValues(event));
-
-
-                    function _shouldlisten(lc, isFunc, sourceTarget, event) {
-
-                        event = getValues(event);
-
-                        return lc.__enabled__ && isMatchDOM(isFunc, sourceTarget, event);
-
-                        function isMatchDOM(isFunc, sourceTarget, event) {
-
-                            var dom = event.dom;
-
-                            return (isFunc === undefined || isFunc === null || isFunc.call(dom, event))
-                                && (sourceTarget === undefined || sourceTarget === null || $(dom).is(sourceTarget));
-                        }
-                    }
-
-
-                    function getValues(event) {
-
-                        var nodeName = event.target.nodeName;
-
-                        event.dom = (nodeName === "#document" || nodeName === "HTML" || nodeName === "BODY") ?
-                            document : event.target;
-
-                        event.values = event.values || {};
-                        try {
-                            event.values = JSON.parse(event.values || {});
-                        } catch (e) { }
-
-                        return event;
-                    }
-                }
+                return _listen(lc, params);
             },
 
 
@@ -181,8 +199,7 @@
                 };
                 base._assureListenDocument(params);
 
-                return lc_rx.listen(params.eventname, null, params.func);
-
+                return _listen(lc, params);
             },
 
 
@@ -197,7 +214,7 @@
                 };
                 base._assureListenElement(params);
 
-                return lc_rx.listen(params.eventname, params.sourceTarget, params.func);
+                return _listen(lc, params);
 
             },
 
@@ -213,7 +230,7 @@
                 };
                 base._assureListenSelf(params);
 
-                return lc_rx.listen(params.eventname, null, params.func);
+                return _listen(lc, params);
             },
 
 
@@ -228,7 +245,7 @@
                 };
                 base._assureListenOthers(params);
 
-                return lc_rx.listen(params.eventname, null, params.func);
+                return _listen(lc, params);
             }
         };
 
@@ -257,7 +274,7 @@
 
     function base_worker($) {
 
-        var assure = _get_assure();
+     //   var assure = _get_assure();
 
         //should include all available document event
         var _nonrecommendNotifyEventNames = _getNonRecommendNotifyEventNames();
@@ -272,7 +289,7 @@
                 return eventname.replaceAll("_", "__").replaceAll(" ", "_");
             },
 
-            _assure: assure,
+            _assure: _get_assure(),
 
             _getListenParams: getListenParams,
             _getListenDocumentParams: getListenDocumentParams,
@@ -341,48 +358,48 @@
 
         function assureListen(params) {
 
-            assure._isString(params.eventname);
+            base._assure._isString(params.eventname);
 
             if (params.sourceTarget) {
-                assure._isString(params.sourceTarget);
-                assure._NonReservedEventTarget(params.sourceTarget);
+                base._assure._isString(params.sourceTarget);
+                base._assure._NonReservedEventTarget(params.sourceTarget);
             }
 
-            assure._isFunction(params.func);
+            base._assure._isFunction(params.func);
         }
 
 
         function assureListenDocument(params) {
 
-            assure._isString(params.eventname);
-            assure._isFunction(params.func);
+            base._assure._isString(params.eventname);
+            base._assure._isFunction(params.func);
         }
 
 
         function assureListenElement(params) {
 
-            assure._isString(params.eventname);
+            base._assure._isString(params.eventname);
 
             if (params.sourceTarget) {
-                assure._isString(params.sourceTarget);
-                assure._NonReservedEventTarget(params.sourceTarget);
+                base._assure._isString(params.sourceTarget);
+                base._assure._NonReservedEventTarget(params.sourceTarget);
             }
 
-            assure._isFunction(params.func);
+            base._assure._isFunction(params.func);
         }
 
 
         function assureListenSelf(params) {
 
-            assure._isString(params.eventname);
-            assure._isFunction(params.func);
+            base._assure._isString(params.eventname);
+            base._assure._isFunction(params.func);
         }
 
 
         function assureListenOthers(params) {
 
-            assure._isString(params.eventname);
-            assure._isFunction(params.func);
+            base._assure._isString(params.eventname);
+            base._assure._isFunction(params.func);
         }
 
 
