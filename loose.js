@@ -157,7 +157,7 @@
             }
 
             function $trigger(values, eventname) {
-                var event = jQuery.Event(eventname);
+                var event = $.Event(eventname);
 
                 var isValue = typeof values === "string" || typeof values === "boolean" || typeof values === "number";
                 event.values = isValue ? values : JSON.stringify(values);
