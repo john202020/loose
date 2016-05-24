@@ -2,6 +2,8 @@
 ### Inspired by Rxjs
 ``rxjs`` observable style listening (i.e. streaming, filtering, mapping, are available on listener). 
 
+### Require
+``es6`` supported broswer.
 
 ### Rxjs observable listening
 
@@ -86,7 +88,7 @@ __notify('event name' [, values])__
 //values is optional. (note: if values exists, it might be first be json stringified and parse back when listened) 
 //If undefined, or null, will be turned to {}.
 
-notify({id:12}, 'just added a new person');
+notify('just added a new person', {id:12});
 notify('call all to be alerted');
 
 ```

@@ -60,13 +60,12 @@
 
 
         function getObservable(params) {
-            var eventname = base._equalizeeventname(params.eventname);
-            
-            return rx.Observable
-                .fromEvent($(document), eventname)
-                .filter(event => _shouldlisten(lc, params.func, params.sourceTarget, event))
-                .map(event => getValues(event));
 
+            var ob = rx.Observable.fromEvent($(document), base._equalizeeventname(params.eventname));
+            ob = ob.filter(event => _shouldlisten(lc, params.func, params.sourceTarget, event));
+            ob = ob.map(event => getValues(event));
+
+            return ob;
 
             function _shouldlisten(lc, isFunc, sourceTarget, event) {
 
