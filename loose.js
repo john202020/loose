@@ -12,7 +12,7 @@
     else
         factory(root, root["jQuery"], root["rx"]);
 
-} (function (root, $, rx) {
+}(function (root, $, rx) {
 
     if (!String.prototype.replaceAll) {
         String.prototype.replaceAll = function (search, replacement) {
@@ -54,50 +54,77 @@
     }
 
 
+    function _notify(lc, args) {
+
+        var eventname = base._equalizeeventname(args[0]);
+
+        var values = args[1];
+
+        _assure._isString(eventname);
+        _assure._NonRecommend_eventname(eventname);
+        _assure._isNonFunction(values);
+
+        if (lc.__enabled__) {
+
+            values = (values === undefined || values === null) ? {} : values;
+            _$trigger(lc, values, eventname);
+        }
+
+        function _$trigger(lc, values, eventname) {
+            var event = $.Event(eventname);
+
+            var isValue = typeof values === "string" || typeof values === "boolean" || typeof values === "number";
+            event.values = isValue ? values : JSON.stringify(values);
+
+            event['token_tracer'] = (event['token_tracer'] || "") + lc.__token__;
+            event['token'] = lc.__token__;
+
+            $.event.trigger(event);
+        }
+    }
+
+
     function _listen(lc, params) {
 
-        return getObservable(params);
+        var eventname = base._equalizeeventname(params.eventname);
 
+        var ob = rx.Observable.fromEvent($(document), eventname);
+        ob = ob.filter(event => _shouldlisten(lc, params.func, params.sourceTarget, event));
+        ob = ob.map(event => getValues(event));
 
-        function getObservable(params) {
+        return ob;
 
-            var ob = rx.Observable.fromEvent($(document), base._equalizeeventname(params.eventname));
-            ob = ob.filter(event => _shouldlisten(lc, params.func, params.sourceTarget, event));
-            ob = ob.map(event => getValues(event));
+        function _shouldlisten(lc, isFunc, sourceTarget, event) {
 
-            return ob;
+            event = getValues(event);
 
-            function _shouldlisten(lc, isFunc, sourceTarget, event) {
+            return lc.__enabled__ && isMatchDOM(isFunc, sourceTarget, event);
 
-                event = getValues(event);
+            function isMatchDOM(isFunc, sourceTarget, event) {
 
-                return lc.__enabled__ && isMatchDOM(isFunc, sourceTarget, event);
+                var dom = event.dom;
 
-                function isMatchDOM(isFunc, sourceTarget, event) {
-
-                    var dom = event.dom;
-
-                    return (isFunc === undefined || isFunc === null || isFunc.call(dom, event))
-                        && (sourceTarget === undefined || sourceTarget === null || $(dom).is(sourceTarget));
-                }
-            }
-
-
-            function getValues(event) {
-
-                var nodeName = event.target.nodeName;
-
-                event.dom = (nodeName === "#document" || nodeName === "HTML" || nodeName === "BODY") ?
-                    document : event.target;
-
-                event.values = event.values || {};
-                try {
-                    event.values = JSON.parse(event.values || {});
-                } catch (e) { }
-
-                return event;
+                return (isFunc === undefined || isFunc === null || isFunc.call(dom, event))
+                    && (sourceTarget === undefined || sourceTarget === null || $(dom).is(sourceTarget));
             }
         }
+
+
+        function getValues(event) {
+
+            var nodeName = event.target.nodeName;
+
+            event.dom = (nodeName === "#document" || nodeName === "HTML" || nodeName === "BODY") ?
+                document : event.target;
+
+            event.values = event.values || {};
+            try {
+                event.values = JSON.parse(event.values || {});
+            } catch (e) { }
+
+            return event;
+        }
+
     }
 
 
@@ -140,33 +167,7 @@
 
         //(eventname, values)
         lc.notify = function () {
-
-            var args = arguments;
-
-            var eventname = args[0];
-            var values = args[1];
-
-            _assure._isString(eventname);
-            _assure._NonRecommend_eventname(eventname);
-            _assure._isNonFunction(values);
-
-            if (lc.__enabled__) {
-
-                values = (values === undefined || values === null) ? {} : values;
-                $trigger(values, base._equalizeeventname(eventname));
-            }
-
-            function $trigger(values, eventname) {
-                var event = $.Event(eventname);
-
-                var isValue = typeof values === "string" || typeof values === "boolean" || typeof values === "number";
-                event.values = isValue ? values : JSON.stringify(values);
-
-                event['token_tracer'] = (event['token_tracer'] || "") + lc.__token__;
-                event['token'] = lc.__token__;
-
-                $.event.trigger(event);
-            }
+            _notify(lc, arguments);
         };
     }
 
@@ -273,8 +274,6 @@
 
 
     function base_worker($) {
-
-     //   var assure = _get_assure();
 
         //should include all available document event
         var _nonrecommendNotifyEventNames = _getNonRecommendNotifyEventNames();

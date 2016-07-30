@@ -64,8 +64,8 @@ __listen(event name [, jquery style dom element selector])__
 //listenDocument(custom or dom event name [, selector]) 
 //listenElement(custom or dom event name [, selector]) 
 
-var listen_anchor_click = listen("click", "a");
-var listen_custom_event = listen("custom event");
+var listen_anchor_click = lc_one.listen("click", "a");
+var listen_custom_event = lc_one.listen("custom event");
 
 ```
 
