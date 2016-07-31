@@ -76,7 +76,7 @@
             var isValue = typeof values === "string" || typeof values === "boolean" || typeof values === "number";
             event.values = isValue ? values : JSON.stringify(values);
 
-       
+
 
             event['token_tracer'] = (event['token_tracer'] || "") + lc.__token__;
             event['token'] = lc.__token__;
@@ -120,7 +120,7 @@
                 document : event.target;
 
             event.values = (event.values === undefined || event.values === null) ? {} : event.values;
-         //   event.values = event.values || {};
+
             try {
                 event.values = JSON.parse(event.values || {});
             } catch (e) { }
