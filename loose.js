@@ -1,6 +1,14 @@
-"use strict";
+﻿"use strict";
+
+String.prototype.replaceAll = String.prototype.replaceAll || function (search, replacement) {
+
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+
+};
 
 
+// require("babel-polyfill");
 (function (factory) {
 
     var root = this || (0, eval)('this');
@@ -12,16 +20,12 @@
     else
         factory(root, root["jQuery"], root["rx"]);
 
-}(function (root, $, rx) {
+}(get));
 
-    if (!String.prototype.replaceAll) {
-        String.prototype.replaceAll = function (search, replacement) {
 
-            var target = this;
-            return target.replace(new RegExp(search, 'g'), replacement);
 
-        }
-    }
+
+function get(root, $, rx) {
 
     var base = base_worker($);
 
@@ -29,7 +33,27 @@
 
     _assure._jquery($);
 
-    var _loose_id = 1;
+
+    var _get_unique_loose_id = (function () {
+        var _loose_id = 1;
+
+        return function () {
+            return _loose_id++;
+        };
+
+    }());
+
+    var _get_loose_feedback_id = (function () {
+
+        var _loose_feedback_id = 1;
+        var _prefix = "lfjafjklasf" + Date.now();
+
+        return function () {
+            return _prefix + Date.now() + _loose_feedback_id++;
+        };
+
+    }());
+
 
     var previous_loose = root.loose;
 
@@ -40,21 +64,35 @@
         return looseModule;
     };
 
+
     return looseModule;
 
 
     function looseModule() {
 
-        var lc = {};
-
-        _loose(lc, typeof arguments[0] === "boolean" ? arguments[0] : true);
+        var lc = _loose(typeof arguments[0] === "boolean" ? arguments[0] : true);
         _loose_rx(lc);
 
         return lc;
     }
 
 
-    function _notify(lc, args) {
+
+    ////////////////////////////////////////////////////
+    //Feedback from listener(s)
+    ////////////////////////////////////////////////////
+    //var feeback_observable = loose_one.notify("something happen event", "pass this value");
+
+    //var subscribe_ = feeback_observable.subscribe((event) => {
+    //    console.log(event.values); // 'something that the listener feedback'
+
+    //    // if want to stop subscribing any more Feedback
+    //    var some_condition = true;
+    //    if (some_condition) {
+    //        subscribe_.dispose();
+    //    }
+    //});
+    function _notify(lc, token, args) {
 
         var eventname = base._equalizeeventname(args[0]);
 
@@ -64,41 +102,68 @@
         _assure._NonRecommend_eventname(eventname);
         _assure._isNonFunction(values);
 
-        if (lc.__enabled__) {
+        var feedback_id = _get_loose_feedback_id();
 
-            values = (values === undefined || values === null) ? {} : values;
-            _$trigger(lc, values, eventname);
+        if (lc.isEnable()) {
+            setTimeout(function () {
+                _$trigger(token, values, eventname, feedback_id);
+            }, 0);
         }
 
-        function _$trigger(lc, values, eventname) {
-            var event = $.Event(eventname);
-
-            var isValue = typeof values === "string" || typeof values === "boolean" || typeof values === "number";
-            event.values = isValue ? values : JSON.stringify(values);
+        return rx.Observable.fromEvent($(document), feedback_id)
+            .filter(function (event) { return event['token'] === token; });
 
 
+        function _$trigger(token, values, eventname, feedback_id) {
 
-            event['token_tracer'] = (event['token_tracer'] || "") + lc.__token__;
-            event['token'] = lc.__token__;
+            var event = prepareEvent($.Event(eventname), token, values);
+
+            event["feedback"] = function (feedback_value) {
+                $.event.trigger(prepareEvent($.Event(feedback_id), token, feedback_value));
+            };
 
             $.event.trigger(event);
+        }
+
+
+        function prepareEvent(event, token, values) {
+
+            _assure._isNonFunction(values);
+
+            values = (values === undefined || values === null) ? "{}" : values;
+
+            var isValue = typeof values === "string" || typeof values === "boolean" || typeof values === "number";
+
+            event.values = isValue ? values : JSON.stringify(values);
+            event['token_tracer'] = (event['token_tracer'] || "") + token;
+            event['token'] = token;
+
+            return event;
         }
     }
 
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Feedback instead of traditional callback.
+    //Values passed to feedback function should be compliance with same rule as values of notify() 
+    //(i.e. simple object or plain value).
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //loose_one.listen("something happen").subscribe((event) => {
+    //    console.log('everything is done');
+    //    event.feedback("the message that will be feedbacked to the notifier");
+    //});
     function _listen(lc, params) {
 
         var eventname = base._equalizeeventname(params.eventname);
 
-        var ob = rx.Observable.fromEvent($(document), eventname);
-        ob = ob.filter(event => _shouldlisten(lc, params.func, params.sourceTarget, event));
-        ob = ob.map(event => getValues(event));
+        return rx.Observable.fromEvent($(document), eventname)
+            .filter(function (event) { return _shouldlisten(lc, params.func, params.sourceTarget, event); })
+            .map(function (event) { return getValues(lc, event); });
 
-        return ob;
 
         function _shouldlisten(lc, isFunc, sourceTarget, event) {
 
-            event = getValues(event);
+            event = getValues(lc, event);
 
             return lc.__enabled__ && isMatchDOM(isFunc, sourceTarget, event);
 
@@ -112,18 +177,21 @@
         }
 
 
-        function getValues(event) {
+        function getValues(lc, event) {
 
             var nodeName = event.target.nodeName;
 
             event.dom = (nodeName === "#document" || nodeName === "HTML" || nodeName === "BODY") ?
                 document : event.target;
 
-            event.values = (event.values === undefined || event.values === null) ? {} : event.values;
+            event.values = (event.values === undefined || event.values === null) ? "{}" : event.values;
 
             try {
-                event.values = JSON.parse(event.values || {});
-            } catch (e) { }
+                event.values = JSON.parse(event.values);
+            }
+            catch (e) {
+                // console.error(e, "typeof event.values: "+ typeof event.values, "event.values: "+event.values, event);
+            }
 
             return event;
         }
@@ -131,7 +199,8 @@
     }
 
 
-    function _loose(lc, enable) {
+    function _loose(enable) {
+        var lc = {};
 
         lc.keys = {
             left: 37,
@@ -142,7 +211,7 @@
             escape: 27
         };
 
-        lc.__token__ = "" + _loose_id++;
+        lc.__token__ = "" + _get_unique_loose_id();
 
         lc.__enabled__ = enable;
 
@@ -168,14 +237,17 @@
         //loose's 'token' will be attached to the generated event
         //'token_tracer' will be attached to the generated event
 
-        //(eventname, values)
+        //(eventname, values, isFeedback)
         lc.notify = function () {
-            _notify(lc, arguments);
+            return _notify(lc, lc.__token__, arguments);
         };
+
+        return lc;
     }
 
 
     function _loose_rx(lc) {
+
         var lc_rx = {
 
             //(eventname, sourceTarget)
@@ -230,7 +302,7 @@
                 var params = base._getListenSelfParams(lc, arguments);
 
                 params.func = function (event) {
-                    return isme(event, lc);
+                    return base._isme(event, lc);
                 };
                 base._assureListenSelf(params);
 
@@ -245,7 +317,7 @@
                 var params = base._getListenOthersParams(lc, arguments);
 
                 params.func = function (event) {
-                    return !isme(event, lc);
+                    return !base._isme(event, lc);
                 };
                 base._assureListenOthers(params);
 
@@ -268,11 +340,13 @@
 
 
     function _dispose(lc) {
-    };
 
-
-    function isme(event, lc) {
-        return event["token"] === lc.__token__;
+        //do not just lc.dispose()
+        // lc.dispose = function () {
+        //    _dispose(lc);
+        //};
+        console.error("implementation of dispose() will not do anything.");
+        return;
     }
 
 
@@ -286,8 +360,12 @@
 
         var base = {
 
+            _isme: function (event, lc) {
+                return event["token"] === lc.__token__;
+            },
             //(eventname)
             _equalizeeventname: function (eventname) {
+
                 return eventname.replaceAll("_", "__").replaceAll(" ", "_");
             },
 
@@ -409,7 +487,7 @@
 
             var nonrecommendNotifyEventNames = "load,unload,click,dbclick,keydown,keypress,keyup,change";
             var nonrecommendNotifyEventNames_form = "blur,focus,search,select,submit";
-            var nonrecommendNotifyEventNames_mouse = "mousedown,mousemove,mouseout,mouseup,mousewheel";
+            var nonrecommendNotifyEventNames_mouse = "mousedown,mousemove,mouseout,mouseover,mouseenter,mouseleave,mouseup,mousewheel";
             var nonrecommendNotifyEventNames_clipboard = "copy,cut,paste";
             var nonrecommendNotifyEventNames_media = "abort";
             var nonrecommendNotifyEventNames_html5 = "afterprint,beforeprint,beforeunload,error,hashchange,message,offline,online,pagehide,pageshow,popstate,resize,storage";
@@ -536,4 +614,7 @@
             };
         }
     }
-}));
+
+
+}
+

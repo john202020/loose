@@ -7,3 +7,4 @@ desktop.ini
 npm-debug.log
 node_modules
 dist
+loose_test.js

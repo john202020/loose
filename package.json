@@ -1,6 +1,6 @@
 {
     "name": "loose",
-    "version": "2.0.6",
+    "version": "2.1.6",
     "description": "Provide clean communication between web components and user interface",
     "main": "loose.js",
     "scripts": {
@@ -22,3 +22,5 @@
         "rx": "^4.1.0"
     }
 }
+
+
